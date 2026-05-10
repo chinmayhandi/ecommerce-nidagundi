@@ -1,10 +1,31 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Star, ShoppingCart } from 'lucide-react';
+import { Star, ShoppingCart, Heart } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import api from '../config/api';
+import toast from 'react-hot-toast';
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
+  const [inWishlist, setInWishlist] = React.useState(false);
+
+  const toggleWishlist = async (e) => {
+    e.preventDefault(); // Prevent Link navigation
+    try {
+      if (inWishlist) {
+        // We'd need the wishlist item ID to remove it, but since we don't have it here easily, 
+        // a robust approach is to let the wishlist page handle removals, or we fetch wishlist state.
+        // For simplicity in a card, we just add it.
+        toast.success('Already in wishlist');
+      } else {
+        await api.post('/wishlist/add', { product_id: product.id });
+        setInWishlist(true);
+        toast.success('Added to wishlist');
+      }
+    } catch (error) {
+      toast.error('Please login to add to wishlist');
+    }
+  };
 
   const handleAddToCart = (e) => {
     e.preventDefault();
@@ -24,6 +45,13 @@ const ProductCard = ({ product }) => {
           {discountPercentage}% OFF
         </div>
       )}
+      
+      <button 
+        onClick={toggleWishlist}
+        className="absolute top-2 right-2 z-20 bg-white p-2 rounded-full shadow-md text-gray-400 hover:text-red-500 transition-colors"
+      >
+        <Heart size={18} className={inWishlist ? "fill-red-500 text-red-500" : ""} />
+      </button>
       
       <Link to={`/products/${product.id}`} className="block relative aspect-square overflow-hidden bg-gray-100">
         <img 

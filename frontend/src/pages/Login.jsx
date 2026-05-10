@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, User as UserIcon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import api from '../config/api';
 import toast from 'react-hot-toast';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -16,9 +17,17 @@ const Login = () => {
     setLoading(true);
     try {
       await login(email, password);
-      navigate('/');
+      
+      // Verify if user is NOT an admin
+      const res = await api.get('/profile');
+      if (res.data && res.data.profile && res.data.profile.role === 'admin') {
+        await logout();
+        toast.error('Admin accounts must use the Admin Portal');
+      } else {
+        navigate('/');
+      }
     } catch (error) {
-      // Error handled in context
+      // Error handled in context or by toast
     } finally {
       setLoading(false);
     }

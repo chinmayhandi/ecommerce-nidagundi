@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Users, Package, ShoppingBag, DollarSign, TrendingUp, AlertTriangle } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Legend } from 'recharts';
 import api from '../../config/api';
 
 const AdminDashboard = () => {
@@ -13,6 +14,16 @@ const AdminDashboard = () => {
     lowStockAlerts: 0
   });
   const [loading, setLoading] = useState(true);
+
+  const mockChartData = [
+    { name: 'Jan', sales: 4000, orders: 240 },
+    { name: 'Feb', sales: 3000, orders: 139 },
+    { name: 'Mar', sales: 2000, orders: 980 },
+    { name: 'Apr', sales: 2780, orders: 390 },
+    { name: 'May', sales: 1890, orders: 480 },
+    { name: 'Jun', sales: 2390, orders: 380 },
+    { name: 'Jul', sales: 3490, orders: 430 },
+  ];
 
   useEffect(() => {
     fetchDashboardStats();
@@ -79,44 +90,45 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* Alerts Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-             <div className="flex items-center justify-between mb-4 border-b pb-2">
-                <h3 className="text-lg font-bold text-gray-900">Pending Orders</h3>
-                <span className="bg-orange-100 text-orange-800 text-xs font-bold px-3 py-1 rounded-full">{stats.pendingOrders}</span>
-             </div>
-             <p className="text-gray-600 text-sm">You have {stats.pendingOrders} orders that need processing.</p>
-             <Link to="/admin/orders" className="text-primary-600 hover:text-primary-800 text-sm font-medium mt-4 inline-block">View Orders &rarr;</Link>
-          </div>
+        {/* Charts & Alerts Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
           
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-             <div className="flex items-center justify-between mb-4 border-b pb-2">
-                <h3 className="text-lg font-bold text-gray-900">Low Stock Alerts</h3>
-                <span className="bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded-full">{stats.lowStockAlerts}</span>
-             </div>
-             <p className="text-gray-600 text-sm">You have {stats.lowStockAlerts} products with low stock levels.</p>
-             <Link to="/admin/products" className="text-primary-600 hover:text-primary-800 text-sm font-medium mt-4 inline-block">Manage Inventory &rarr;</Link>
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 lg:col-span-2">
+            <h3 className="text-lg font-bold text-gray-900 mb-6">Sales Overview</h3>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={mockChartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} />
+                  <YAxis axisLine={false} tickLine={false} />
+                  <Tooltip cursor={{fill: '#f3f4f6'}} contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
+                  <Legend />
+                  <Bar dataKey="sales" name="Sales (₹)" fill="#111827" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
-        </div>
 
-        {/* Management Links */}
-        <h2 className="text-xl font-bold text-gray-900 mb-6">Quick Links</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {menuItems.map((item, idx) => {
-            const Icon = item.icon;
-            return (
-              <Link key={idx} to={item.path} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex items-center gap-4 group">
-                <div className={`${item.color} text-white p-4 rounded-xl group-hover:scale-110 transition-transform`}>
-                  <Icon size={24} />
-                </div>
-                <div className="font-semibold text-gray-800 text-lg">{item.title}</div>
-              </Link>
-            )
-          })}
-        </div>
-
-      </div>
+          <div className="flex flex-col gap-6 lg:col-span-1">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex-1">
+               <div className="flex items-center justify-between mb-4 border-b pb-2">
+                  <h3 className="text-lg font-bold text-gray-900">Pending Orders</h3>
+                  <span className="bg-orange-100 text-orange-800 text-xs font-bold px-3 py-1 rounded-full">{stats.pendingOrders}</span>
+               </div>
+               <p className="text-gray-600 text-sm">You have {stats.pendingOrders} orders that need processing.</p>
+               <Link to="/admin/orders" className="text-primary-600 hover:text-primary-800 text-sm font-medium mt-4 inline-block">View Orders &rarr;</Link>
+            </div>
+            
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex-1">
+               <div className="flex items-center justify-between mb-4 border-b pb-2">
+                  <h3 className="text-lg font-bold text-gray-900">Low Stock Alerts</h3>
+                  <span className="bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded-full">{stats.lowStockAlerts}</span>
+               </div>
+               <p className="text-gray-600 text-sm">You have {stats.lowStockAlerts} products with low stock levels.</p>
+               <Link to="/admin/products" className="text-primary-600 hover:text-primary-800 text-sm font-medium mt-4 inline-block">Manage Inventory &rarr;</Link>
+            </div>
+          </div>
+        </div>      </div>
     </div>
   );
 };

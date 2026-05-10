@@ -3,8 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 
 // Layouts & Components
-import Navbar from './components/Navbar'
-import Footer from './components/Footer'
+import UserLayout from './components/UserLayout'
+import AdminLayout from './components/AdminLayout'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminRoute from './components/AdminRoute'
 
@@ -47,16 +47,15 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="flex flex-col min-h-screen">
-        <Navbar />
-        <main className="flex-grow">
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<Home />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/products/:id" element={<ProductDetails />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/contact" element={<Contact />} />
+      <Routes>
+        {/* User Layout Routes */}
+        <Route element={<UserLayout />}>
+          {/* Public Routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/products/:id" element={<ProductDetails />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/contact" element={<Contact />} />
             
             {/* Auth Routes */}
             <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
@@ -72,24 +71,27 @@ function App() {
               <Route path="/my-orders/:id" element={<OrderDetails />} />
               <Route path="/wishlist" element={<Wishlist />} />
             </Route>
+        </Route> {/* End of UserLayout */}
 
-            {/* Admin Routes */}
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin/register" element={<AdminRegister />} />
-            <Route element={<AdminRoute />}>
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/admin/products/add" element={<AddProduct />} />
-              <Route path="/admin/products" element={<ManageProducts />} />
-              <Route path="/admin/orders" element={<ManageOrders />} />
-              <Route path="/admin/customers" element={<ManageCustomers />} />
-              <Route path="/admin/pincodes" element={<ManagePincodes />} />
-              <Route path="/admin/coupons" element={<Coupons />} />
-              <Route path="/admin/reviews" element={<Reviews />} />
-            </Route>
-          </Routes>
-        </main>
-        <Footer />
-      </div>
+        {/* Admin Login/Register (No layout) */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/register" element={<AdminRegister />} />
+
+        {/* Admin Layout Routes */}
+        <Route element={<AdminRoute />}>
+          <Route element={<AdminLayout />}>
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/products/add" element={<AddProduct />} />
+            <Route path="/admin/products" element={<ManageProducts />} />
+            <Route path="/admin/orders" element={<ManageOrders />} />
+            <Route path="/admin/customers" element={<ManageCustomers />} />
+            <Route path="/admin/pincodes" element={<ManagePincodes />} />
+            <Route path="/admin/coupons" element={<Coupons />} />
+            <Route path="/admin/reviews" element={<Reviews />} />
+          </Route>
+        </Route>
+
+      </Routes>
     </BrowserRouter>
   )
 }

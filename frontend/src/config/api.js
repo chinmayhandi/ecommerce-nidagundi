@@ -10,6 +10,11 @@ const api = axios.create({
 // Add a request interceptor to include the auth token
 api.interceptors.request.use(
   (config) => {
+    // Automatically delete Content-Type for FormData so browser sets the boundary correctly
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+    }
+
     // Supabase v2 uses sb-<project-ref>-auth-token
     const projectId = import.meta.env.VITE_SUPABASE_URL; // Using the project ref from env
     const token = localStorage.getItem(`sb-${projectId}-auth-token`);

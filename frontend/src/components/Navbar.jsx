@@ -6,6 +6,7 @@ import { useCart } from '../context/CartContext';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { user, isAdmin, logout } = useAuth();
   const { cart } = useCart();
@@ -81,27 +82,32 @@ const Navbar = () => {
               )}
             </Link>
 
-            <div className="relative group cursor-pointer">
-              <div className="flex items-center text-gray-600 hover:text-primary-900 transition-colors">
+            <div className="relative cursor-pointer">
+              <div 
+                className="flex items-center text-gray-600 hover:text-primary-900 transition-colors"
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+              >
                 <User className="h-6 w-6" />
               </div>
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block border border-gray-100">
-                {user ? (
-                  <>
-                    <div className="px-4 py-2 text-xs text-gray-500 border-b border-gray-100">{user.email}</div>
-                    <Link to="/my-orders" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Orders</Link>
-                    {isAdmin && (
-                      <Link to="/admin" className="block px-4 py-2 text-sm text-primary-900 font-medium hover:bg-gray-50">Admin Dashboard</Link>
-                    )}
-                    <button onClick={logout} className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50">Logout</button>
-                  </>
-                ) : (
-                  <>
-                    <Link to="/login" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Login</Link>
-                    <Link to="/register" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Register</Link>
-                  </>
-                )}
-              </div>
+              {userMenuOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-100">
+                  {user ? (
+                    <>
+                      <div className="px-4 py-2 text-xs text-gray-500 border-b border-gray-100">{user.email}</div>
+                      <Link to="/my-orders" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onClick={() => setUserMenuOpen(false)}>My Orders</Link>
+                      {isAdmin && (
+                        <Link to="/admin" className="block px-4 py-2 text-sm text-primary-900 font-medium hover:bg-gray-50" onClick={() => setUserMenuOpen(false)}>Admin Dashboard</Link>
+                      )}
+                      <button onClick={() => { logout(); setUserMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50">Logout</button>
+                    </>
+                  ) : (
+                    <>
+                      <Link to="/login" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onClick={() => setUserMenuOpen(false)}>Login</Link>
+                      <Link to="/register" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" onClick={() => setUserMenuOpen(false)}>Register</Link>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 

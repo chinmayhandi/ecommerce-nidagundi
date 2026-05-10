@@ -49,11 +49,16 @@ const Home = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h2 className="text-2xl font-bold text-gray-900 mb-8">Shop by Category</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-          {['Electronics', 'Fashion', 'Home Decor', 'Beauty'].map((cat, idx) => (
-            <Link key={idx} to={`/products?category=${cat}`} className="group relative rounded-xl overflow-hidden aspect-[4/3] bg-gray-200 block shadow-sm hover:shadow-md transition-shadow">
-              <img src={`https://source.unsplash.com/random/400x300/?${cat.replace(' ', ',')}`} alt={cat} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" />
+          {[
+            { name: 'Electronics', image: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+            { name: 'Fashion', image: 'https://images.unsplash.com/photo-1445205170230-053b83016050?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+            { name: 'Home Decor', image: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+            { name: 'Beauty', image: 'https://images.unsplash.com/photo-1596462502278-27bf85033e5a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' }
+          ].map((cat, idx) => (
+            <Link key={idx} to={`/products?category=${cat.name}`} className="group relative rounded-xl overflow-hidden aspect-[4/3] bg-gray-200 block shadow-sm hover:shadow-md transition-shadow">
+              <img src={cat.image} alt={cat.name} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4 md:p-6">
-                <h3 className="text-white font-semibold text-lg md:text-xl">{cat}</h3>
+                <h3 className="text-white font-semibold text-lg md:text-xl">{cat.name}</h3>
               </div>
             </Link>
           ))}

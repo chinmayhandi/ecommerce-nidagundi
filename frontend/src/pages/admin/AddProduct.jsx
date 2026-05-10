@@ -69,9 +69,7 @@ const AddProduct = () => {
     });
 
     try {
-      await api.post('/admin/products', data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      await api.post('/admin/products', data);
       toast.success('Product added successfully!');
       navigate('/admin/products');
     } catch (error) {

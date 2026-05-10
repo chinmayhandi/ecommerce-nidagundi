@@ -9,7 +9,10 @@ supabase: Client = create_client(Config.SUPABASE_URL, Config.SUPABASE_SERVICE_RO
 @review_bp.route('/reviews/<product_id>', methods=['GET'])
 def get_product_reviews(product_id):
     try:
-        res = supabase.table('reviews').select('*, users_profile(full_name)').eq('product_id', product_id).order('created_at', desc=True).execute()
+        try:
+            res = supabase.table('reviews').select('*, users_profile(full_name)').eq('product_id', product_id).order('created_at', desc=True).execute()
+        except Exception as join_err:
+            res = supabase.table('reviews').select('*').eq('product_id', product_id).order('created_at', desc=True).execute()
         return jsonify({'reviews': res.data}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 400
@@ -18,7 +21,11 @@ def get_product_reviews(product_id):
 @admin_required
 def get_all_reviews(current_user):
     try:
-        res = supabase.table('reviews').select('*, users_profile(full_name), products(name)').order('created_at', desc=True).execute()
+        try:
+            res = supabase.table('reviews').select('*, users_profile(full_name), products(name)').order('created_at', desc=True).execute()
+        except Exception as join_err:
+            print(f"Join failed, falling back: {join_err}")
+            res = supabase.table('reviews').select('*').order('created_at', desc=True).execute()
         return jsonify({'reviews': res.data}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 400
